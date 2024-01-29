@@ -235,3 +235,80 @@ function MyButton() {
 ```
 
 이벤트 핸들러 함수를 호출하지 않도록 하는 것에 유의해야 한다. 이벤트가 발생하면 리액트가 함수를 호출하기 때문이다.
+
+## Updating the screen
+
+컴포넌트가 어떤 정보를 기억하고(remember) 표시하도록(display) 할 수 있다. 같은 컴포넌트를 여러번 렌더링 할 때는 각 컴포넌트가 고유의 상태값을 가지게 된다.
+
+```js
+import { useState } from 'react';
+
+export default function MyApp() {
+    return (
+        <div>
+            <h1>Counters that update seperately</h1>
+            <MyButton />
+            <MyButton />
+        </div>
+    )
+}
+
+function MyButton() {
+    /*
+    Two things from `useState`
+
+    count: 현재 상태(state)
+    setCount: 상태를 업데이트 할 수 있는 함수
+    */
+    const [count, setCount] = useState(0);
+
+    function handleClick() {
+        setCount(count + 1)
+    }
+
+    return (
+        <button onClick={handleClick}>
+            Clicked {count} times
+        </button>
+    )
+}
+```
+
+## Using Hooks
+
+함수의 이름이 `use`로 시작하는 경우에는 이 함수를 훅이라(Hook) 칭한다. `useState`의 경우 리액트가 제공하는 내장(built-in) 훅이다. 사용자는 내장 훅을 조합하여 새로운 훅을 만들 수 있다.
+
+훅은 다른 함수보다 더 엄격함이 요구된다. 일례로 컴포넌트나 다른 훅의 상부에서만(at the top) 훅을 호출할 수 있다. 또 조건문이나 반복문 내부에서 `useState`를 사용하려면 새로운 컴포넌트를 추출하고(extract) 그 내부에 포함해야 한다.
+
+## Sharing data between components
+
+컴포넌트들 간에 데이터를 공유하고 동시에 업데이트 되도록 할 수 있다.
+
+```js
+import { useState } from 'react';
+
+export default function MyApp() {    
+    const [count, setCount] = useState(0);  // Moved state `count`
+
+    function handleClick() {
+        setCount(count + 1);
+    }
+
+    return (
+        <div>
+            <h1>Counters that update separately</h1>
+            <MyButton count={count} onClick={handleClick} />
+            <MyButton count={count} onClick={handleClick} />
+            <MyButton />
+        </div>
+    );
+}
+
+function MyButton({ count, onClick }) {  // props
+    return (
+        <button onClick={onClick}>
+            Clicked {count} times
+        </button>
+    );
+}
+```
